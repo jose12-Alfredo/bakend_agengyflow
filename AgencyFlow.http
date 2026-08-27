@@ -1,0 +1,372 @@
+@AgencyFlow_HostAddress = http://localhost:5155
+@RoleId = 3e4d096d-8a23-4282-b202-8880f2d45230
+@DepartmentId = e6552b2d-fd59-4416-897a-7d1175c24b09
+@ClientCompanyId = ceae1085-55a2-4aef-8d54-ff743b151a23
+@ProjectTypeId = 8138a399-fc43-4dcf-84be-92033afddc17
+@ProjectId = 2b094f63-1741-409c-bb4c-4a5eba50a720
+@SubProjectId = 44780b83-adae-4f22-bd06-41f49144ea9a
+@TaskItemId = 8f36da30-9ede-42cd-b220-e4f9f6ec9ad2
+@SubTaskId = 5e78b5c9-0add-417c-af00-ae765dde1139
+@TemporarySubTaskId = f87cd54e-538a-4b00-a30e-3c15fd51d52e
+@UserId = 5f382c12-c781-4a98-ae7b-684affdfc9ec
+@DepartmentUserId = 3fd1bbaa-fed7-4687-ba59-f876a520ad52
+
+### Consultar roles
+
+GET {{AgencyFlow_HostAddress}}/api/roles
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Probar validacion de pagina incorrecta
+
+GET {{AgencyFlow_HostAddress}}/api/roles?page=0&pageSize=10
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Probar limite de cantidad por pagina
+
+GET {{AgencyFlow_HostAddress}}/api/roles?page=1&pageSize=101
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+
+### Crear un rol
+
+POST {{AgencyFlow_HostAddress}}/api/roles
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Administrador",
+  "description": "Administra el sistema"
+}
+
+### Consultar un rol por Id
+
+GET {{AgencyFlow_HostAddress}}/api/roles/{{RoleId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+### Actualizar un rol
+
+PUT {{AgencyFlow_HostAddress}}/api/roles/{{RoleId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Administrador General",
+  "description": "Administra toda la plataforma"
+}
+
+### Eliminar un rol
+
+DELETE {{AgencyFlow_HostAddress}}/api/roles/{{RoleId}}
+Authorization: Bearer {{auth_token}}
+
+### Crear un departamento
+
+POST {{AgencyFlow_HostAddress}}/api/departments
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Tecnología",
+  "description": "Departamento encargado de los sistemas"
+}
+
+### Consultar departamentos
+
+GET {{AgencyFlow_HostAddress}}/api/departments
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Probar validacion de pagina en departamentos
+
+GET {{AgencyFlow_HostAddress}}/api/departments?page=0&pageSize=10
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Consultar departamento por Id
+
+GET {{AgencyFlow_HostAddress}}/api/departments/{{DepartmentId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Actualizar departamento
+
+PUT {{AgencyFlow_HostAddress}}/api/departments/{{DepartmentId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Tecnología e Innovación",
+  "description": "Gestiona los sistemas y proyectos tecnológicos"
+}
+
+### Eliminar departamento
+
+DELETE {{AgencyFlow_HostAddress}}/api/departments/{{DepartmentId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Crear empresa cliente
+
+POST {{AgencyFlow_HostAddress}}/api/client-companies
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Empresa Demo",
+  "description": "Cliente de prueba",
+  "email": "contacto@empresademo.com",
+  "phone": "70000000"
+}
+
+### Consultar empresas
+
+GET {{AgencyFlow_HostAddress}}/api/client-companies
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Consultar empresas utilizando filtros
+
+GET {{AgencyFlow_HostAddress}}/api/client-companies?page=1&pageSize=10&nombre=Empresa&email=contacto
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Crear un tipo de proyecto
+
+POST {{AgencyFlow_HostAddress}}/api/project-types
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Desarrollo de Software",
+  "description": "Proyectos de aplicaciones y sistemas"
+}
+
+### Consultar tipos de proyecto
+
+GET {{AgencyFlow_HostAddress}}/api/project-types
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Consultar tipos de proyecto utilizando nombre
+
+GET {{AgencyFlow_HostAddress}}/api/project-types?page=1&pageSize=10&nombre=Software
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+
+### Crear un usuario administrador
+
+POST {{AgencyFlow_HostAddress}}/api/users
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "firstName": "Jose",
+  "lastName": "Administrador",
+  "phone": "70000001",
+  "email": "admin@agencyflow.local",
+  "password": "ClaveSegura123",
+  "roleId": "{{RoleId}}",
+  "clientCompanyId": null
+}
+
+### Consultar usuarios
+
+GET {{AgencyFlow_HostAddress}}/api/users
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Iniciar sesión
+
+POST {{AgencyFlow_HostAddress}}/api/users/login
+Content-Type: application/json
+
+{
+  "email": "admin@agencyflow.local",
+  "password": "ClaveSegura123"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### Asignar usuario a departamento
+
+POST {{AgencyFlow_HostAddress}}/api/department-users
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "userId": "{{UserId}}",
+  "departmentId": "{{DepartmentId}}"
+}
+
+### Consultar asignaciones
+
+GET {{AgencyFlow_HostAddress}}/api/department-users
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Consultar asignaciones del usuario
+
+GET {{AgencyFlow_HostAddress}}/api/department-users?userId={{UserId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Eliminar asignacion de usuario a departamento
+
+DELETE {{AgencyFlow_HostAddress}}/api/department-users/{{DepartmentUserId}}
+Authorization: Bearer {{auth_token}}
+
+
+### Crear un proyecto
+
+POST {{AgencyFlow_HostAddress}}/api/projects
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "Plataforma de ventas",
+  "detail": "Sistema para gestionar ventas",
+  "startDate": "2026-08-01",
+  "endDate": null,
+  "projectTypeId": "{{ProjectTypeId}}",
+  "clientUserId": null
+}
+
+### Consultar proyectos
+
+GET {{AgencyFlow_HostAddress}}/api/projects
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Crear un subproyecto
+
+POST {{AgencyFlow_HostAddress}}/api/subprojects
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "Modulo de usuarios",
+  "detail": "Registro y administracion de usuarios",
+  "startDate": "2026-08-01",
+  "endDate": null,
+  "status": "Pendiente",
+  "projectId": "{{ProjectId}}",
+  "departmentId": "{{DepartmentId}}",
+  "assignedUserId": "{{UserId}}"
+}
+
+### Consultar subproyectos
+
+GET {{AgencyFlow_HostAddress}}/api/subprojects
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Consultar un subproyecto por Id
+
+GET {{AgencyFlow_HostAddress}}/api/subprojects/{{SubProjectId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Consultar el proyecto completo con sus subproyectos
+
+GET {{AgencyFlow_HostAddress}}/api/projects/{{ProjectId}}/full
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Crear una tarea
+
+POST {{AgencyFlow_HostAddress}}/api/tasks
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "Crear formulario de registro",
+  "detail": "Construir el formulario para registrar usuarios",
+  "startDate": "2026-08-02",
+  "endDate": null,
+  "status": "Pendiente",
+  "subProjectId": "{{SubProjectId}}",
+  "assignedUserId": "{{UserId}}"
+}
+
+### Consultar tareas
+
+GET {{AgencyFlow_HostAddress}}/api/tasks
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Crear una subtarea
+
+POST {{AgencyFlow_HostAddress}}/api/subtasks
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "Validar campos del formulario",
+  "detail": "Comprobar nombre, correo y contrasena",
+  "startDate": "2026-08-02",
+  "endDate": null,
+  "status": "Pendiente",
+  "taskItemId": "{{TaskItemId}}",
+  "assignedUserId": "{{UserId}}"
+}
+
+### Consultar subtareas
+
+GET {{AgencyFlow_HostAddress}}/api/subtasks
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Actualizar una subtarea
+
+PUT {{AgencyFlow_HostAddress}}/api/subtasks/{{SubTaskId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "Validar campos del formulario",
+  "detail": "Comprobar nombre, correo y contrasena",
+  "startDate": "2026-08-02",
+  "endDate": null,
+  "status": "En curso",
+  "taskItemId": "{{TaskItemId}}",
+  "assignedUserId": "{{UserId}}"
+}
+
+### Filtrar subtareas en curso
+
+GET {{AgencyFlow_HostAddress}}/api/subtasks?status=En%20curso
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Eliminar logicamente la subtarea temporal
+
+DELETE {{AgencyFlow_HostAddress}}/api/subtasks/{{TemporarySubTaskId}}
+Authorization: Bearer {{auth_token}}
+
+### Comprobar que la subtarea eliminada ya no es visible
+
+GET {{AgencyFlow_HostAddress}}/api/subtasks/{{TemporarySubTaskId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+### Probar correo duplicado con mayusculas
+
+POST {{AgencyFlow_HostAddress}}/api/users
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "firstName": "Usuario",
+  "lastName": "Duplicado",
+  "phone": null,
+  "email": " ADMIN@AGENCYFLOW.LOCAL ",
+  "password": "ClavePrueba123",
+  "roleId": "{{RoleId}}",
+  "clientCompanyId": null
+}

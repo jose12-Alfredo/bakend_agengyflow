@@ -1,0 +1,4 @@
+interface:
+  display_name: "AgencyFlow Backend"
+  short_description: "Mantén y verifica el backend de AgencyFlow."
+  default_prompt: "Use $agencyflow-backend to continue work on the AgencyFlow backend safely."

@@ -1,0 +1,27 @@
+# .NET
+bin/
+obj/
+
+# JetBrains Rider
+.idea/
+
+# Visual Studio
+.vs/
+
+# Archivos locales de usuario
+*.user
+*.suo
+
+# Resultados de pruebas
+TestResults/
+
+# Logs
+*.log
+
+# Variables de entorno, por si las usas después
+.env
+.env.*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
