@@ -6,6 +6,7 @@ using AgencyFlow.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -61,7 +62,11 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var jwtKey = builder.Configuration["Jwt:Key"]!;
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    throw new InvalidOperationException("Falta la configuracion Jwt:Key.");
+}
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -103,15 +108,29 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("Frontend", policy =>
     {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        if (allowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(allowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
     });
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -141,6 +160,8 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<WorkTimingService>();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 app.UseExceptionHandler(errorApp =>
 {
@@ -182,7 +203,8 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() ||
+    app.Configuration.GetValue<bool>("Swagger:Enabled"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -203,10 +225,12 @@ app.UseStatusCodePages(async statusCodeContext =>
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }))
+    .AllowAnonymous();
 
 app.Run();

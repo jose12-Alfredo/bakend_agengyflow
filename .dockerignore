@@ -1,0 +1,14 @@
+.git
+.idea
+.vs
+**/bin
+**/obj
+**/TestResults
+**/*.user
+**/*.suo
+**/*.log
+.env
+.env.*
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/http-client.private.env.json
